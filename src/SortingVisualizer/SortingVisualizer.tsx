@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { bubbleSort } from "./sortingAlgos/BubbleSort";
 import { mergeSort } from "./sortingAlgos/MergeSort";
+import { quickSort } from "./sortingAlgos/QuickSort";
 
 export default function SortingVisualizer() {
     useEffect(() => {
@@ -34,9 +35,9 @@ export default function SortingVisualizer() {
             <button onClick={() => mergeSort(array, setArray)} className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 active:bg-gray-600 transition-colors cursor-pointer ml-4">
                 Merge Sort
             </button>
-            {/* <button onClick={quickSort} className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 active:bg-gray-600 transition-colors cursor-pointer ml-4">
+            <button onClick={() => quickSort(array, setArray)} className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 active:bg-gray-600 transition-colors cursor-pointer ml-4">
                 Quick Sort
-            </button> */}
+            </button>
         </>
 
     )
