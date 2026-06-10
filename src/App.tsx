@@ -8,8 +8,8 @@ function App() {
   return (
 
     <BrowserRouter>
-      {/* <SortingVisualizer></SortingVisualizer> */}
-      <GraphVisualizer></GraphVisualizer>
+     {/* < SortingVisualizer /> */}
+      < GraphVisualizer />
     </BrowserRouter>
   )
 }
