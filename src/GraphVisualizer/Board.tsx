@@ -1,4 +1,5 @@
 import { useVisualizerStore } from "@/store/visualizer";
+import {CELL_COLORS } from '@/types'
 
 export function Board() {
     const grid = useVisualizerStore(s => s.grid)
@@ -12,7 +13,7 @@ export function Board() {
                 row.map((cell) => (
                     <div
                         key={`${cell.row}-${cell.col}`}
-                        className="h-[22px] w-[22px] border border-slate-200 hover:bg-slate-100"
+                        className={`h-[22px] w-[22px] border border-slate-200 hover:bg-slate-100 ${CELL_COLORS[cell.type]}`}
                     />
                 ))
             )}
