@@ -77,3 +77,13 @@ export const SPEED_MAP: Record<SpeedLevel, number> = {
     normal: 30, 
     slow: 80,
 }
+
+export const CELL_COLORS = {
+    empty: 'bg-white',
+    wall: 'bg-slate-800',
+    start: 'bg-green-500',
+    end: 'bg-red-500',
+    visited: 'bg-sky-400',
+    path: 'bg-yellow-300',
+    weight: 'bg-purple-400',
+  }
