@@ -1,6 +1,6 @@
 import { useVisualizerStore } from "@/store/visualizer";
 import type { Cell } from '@/types'
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { CellBoard } from "./CellBoard";
 
 export function Board() {
@@ -21,7 +21,7 @@ export function Board() {
         return () => window.removeEventListener('mouseup', up)
     }, [setMouseDown, setDragMode])
 
-    function handleDown(cell: Cell) {
+    const handleDown = useCallback((cell: Cell) => {
         setMouseDown(true)
 
         if (cell.type === 'start') { setDragMode('move-start'); return }
@@ -30,9 +30,9 @@ export function Board() {
         const mode = cell.type === 'wall' ? 'erase' : 'wall'
         setDragMode(mode)
         setCell(cell.row, cell.col, mode === 'wall' ? 'wall' : 'empty')
-    }
+    }, [setMouseDown, setDragMode, setCell])
 
-    function handleEnter(cell: Cell) {
+    const handleEnter = useCallback((cell: Cell) => {
         const { isMouseDown, dragMode } = useVisualizerStore.getState()
         if (!isMouseDown) return
 
@@ -42,7 +42,7 @@ export function Board() {
             case 'move-start': setStartNode({ row: cell.row, col: cell.col }); break
             case 'move-end': setEndNode({ row: cell.row, col: cell.col }); break
         }
-    }
+    }, [setCell, setStartNode, setEndNode])
 
     return (
         <div
