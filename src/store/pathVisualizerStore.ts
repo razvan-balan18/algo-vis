@@ -280,7 +280,8 @@ export const useVisualizerStore = create<VisualizerStore>()(
           for (const c of step.cells) {
             setCell(c.row, c.col, step.type === 'visit' ? 'visited' : 'path')
           }
-          await sleep(10)
+          // Read speed fresh each tick so changing it mid-run takes effect.
+          await sleep(SPEED_MAP[get().speed])
         }
 
         if (myRun === runId) {
