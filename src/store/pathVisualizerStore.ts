@@ -9,8 +9,8 @@ import type {
   SpeedLevel,
   DragMode,
   GridSetup,
-} from '@/types'
-import { SPEED_MAP } from '@/types'
+} from '@/types/pathIndex'
+import { SPEED_MAP } from '@/types/pathIndex'
 import { bfs } from '@/GraphVisualizer/algs/bfs'
 import { dfs } from '@/GraphVisualizer/algs/dfs'
 import { dijkstra } from '@/GraphVisualizer/algs/dijkstra'

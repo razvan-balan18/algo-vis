@@ -1,5 +1,5 @@
-import { useVisualizerStore } from "@/store/visualizer";
-import { ALGORITHM_LIST } from "@/types";
+import { useVisualizerStore } from "@/store/pathVisualizerStore";
+import { ALGORITHM_LIST } from "@/types/pathIndex";
 
 export const Controls = () => {
     const selectedAlgorithm = useVisualizerStore(s => s.selectedAlgorithm)

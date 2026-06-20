@@ -1,5 +1,5 @@
-import { useVisualizerStore } from "@/store/visualizer";
-import type { Cell } from '@/types'
+import { useVisualizerStore } from "@/store/pathVisualizerStore";
+import type { Cell } from '@/types/pathIndex'
 import { useEffect, useCallback } from "react";
 import { CellBoard } from "./CellBoard";
 

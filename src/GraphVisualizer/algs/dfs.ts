@@ -1,4 +1,4 @@
-import type { AlgorithmResult, AlgorithmStep, Cell, Coordinate } from "@/types";
+import type { AlgorithmResult, AlgorithmStep, Cell, Coordinate } from "@/types/pathIndex";
 
 export function dfs(grid: Cell[][], start: Coordinate, end: Coordinate): AlgorithmResult {
     const rows = grid.length;

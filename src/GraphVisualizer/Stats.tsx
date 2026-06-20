@@ -1,4 +1,4 @@
-import { useVisualizerStore } from "@/store/visualizer";
+import { useVisualizerStore } from "@/store/pathVisualizerStore";
 
 export const Stats = () => {
     const stats = useVisualizerStore(s => s.stats)

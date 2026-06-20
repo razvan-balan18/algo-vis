@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { bubbleSort } from "./sortingAlgos/BubbleSort";
-import { mergeSort } from "./sortingAlgos/MergeSort";
-import { quickSort } from "./sortingAlgos/QuickSort";
-import { insertionSort } from "./sortingAlgos/InsertionSort";
+import { bubbleSort } from "./algs/BubbleSort";
+import { mergeSort } from "./algs/MergeSort";
+import { quickSort } from "./algs/QuickSort";
+import { insertionSort } from "./algs/InsertionSort";
 
 export default function SortingVisualizer() {
     useEffect(() => {

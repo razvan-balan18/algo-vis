@@ -1,4 +1,4 @@
-import type { AlgorithmResult, AlgorithmStep, Cell, Coordinate } from "@/types";
+import type { AlgorithmResult, AlgorithmStep, Cell, Coordinate } from "@/types/pathIndex";
 import { MinHeap } from "./heap";
 
 export function astar(grid: Cell[][], start: Coordinate, end: Coordinate): AlgorithmResult {
