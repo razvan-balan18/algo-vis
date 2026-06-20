@@ -4,11 +4,13 @@ import { ALGORITHM_LIST } from "@/types/pathIndex";
 export const Controls = () => {
     const selectedAlgorithm = useVisualizerStore(s => s.selectedAlgorithm)
     const status = useVisualizerStore(s => s.status)
+    const speed = useVisualizerStore(s => s.speed)
 
     const setAlgorithm = useVisualizerStore(s => s.setAlgorithm)
     const runAlgorithm = useVisualizerStore(s => s.runAlgorithm)
     const clearPath = useVisualizerStore(s => s.clearPath)
     const clearGrid = useVisualizerStore(s => s.clearGrid)
+    const setSpeed = useVisualizerStore(s => s.setSpeed)
 
     const isRunning = status === 'running'
 
@@ -50,6 +52,16 @@ export const Controls = () => {
             >
                 Clear Walls
             </button>
+
+            <select
+                value={speed}
+                onChange={(e) => setSpeed(e.target.value as typeof speed)}
+                className="rounded border border-slate-300 px-2 py-1"
+            >
+                <option value="fast">Fast</option>
+                <option value="normal">Normal</option>
+                <option value="slow">Slow</option>
+            </select>
         </div>
     )
 }
