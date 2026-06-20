@@ -1,109 +1,115 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import type {
-    Cell,
-    Coordinate,
-    AlgorithmId,
-    AlgorithmResult,
-    Status,
-    SpeedLevel,
-    DragMode,
-    GridSetup,
+  Cell,
+  Coordinate,
+  AlgorithmId,
+  AlgorithmResult,
+  Status,
+  SpeedLevel,
+  DragMode,
+  GridSetup,
 } from '@/types'
 import { SPEED_MAP } from '@/types'
 import { bfs } from '@/GraphVisualizer/algs/bfs'
+import { dfs } from '@/GraphVisualizer/algs/dfs'
+import { dijkstra } from '@/GraphVisualizer/algs/dijkstra'
+import { astar } from '@/GraphVisualizer/algs/astar'
 
 type AlgorithmFn = (grid: Cell[][], start: Coordinate, end: Coordinate) => AlgorithmResult
 
 const ALGORITHMS: Partial<Record<AlgorithmId, AlgorithmFn>> = {
   bfs,
+  dfs,
+  dijkstra,
+  astar,
 }
 
 let runId = 0
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
 function createGrid(rows: number, cols: number, start: Coordinate, end: Coordinate): Cell[][] {
-    return Array.from({ length: rows }, (_, r) =>
-        Array.from({ length: cols }, (_, c) => ({
-            row: r,
-            col: c,
-            type:
-                r === start.row && c === start.col ? ('start' as const) : r === end.row && c === end.col ? ('end' as const) : ('empty' as const),
-            weight: 1,
-            isAnimating: false,
-        }))
-    )
+  return Array.from({ length: rows }, (_, r) =>
+    Array.from({ length: cols }, (_, c) => ({
+      row: r,
+      col: c,
+      type:
+        r === start.row && c === start.col ? ('start' as const) : r === end.row && c === end.col ? ('end' as const) : ('empty' as const),
+      weight: 1,
+      isAnimating: false,
+    }))
+  )
 }
 
 // default starting/ending locations
 const DEFAULT_START: Coordinate = {
-    row: 15,
-    col: 10,
+  row: 15,
+  col: 10,
 }
 
 const DEFAULT_END: Coordinate = {
-    row: 15,
-    col: 30,
+  row: 15,
+  col: 30,
 }
 
 const DEFAULT_GRID_SETUP: GridSetup = {
-    rows: 30,
-    cols: 50,
+  rows: 30,
+  cols: 50,
 }
 
 // store type
 interface VisualizerState {
-    // grid setup
-    grid: Cell[][]
-    gridSetup: GridSetup
-    startNode: Coordinate
-    endNode: Coordinate
+  // grid setup
+  grid: Cell[][]
+  gridSetup: GridSetup
+  startNode: Coordinate
+  endNode: Coordinate
 
-    // algorithm 
-    selectedAlgorithm: AlgorithmId
-    results: AlgorithmResult | null
+  // algorithm 
+  selectedAlgorithm: AlgorithmId
+  results: AlgorithmResult | null
 
-    // custom controls
-    status: Status
-    speed: SpeedLevel
+  // custom controls
+  status: Status
+  speed: SpeedLevel
 
-    // drag mode
-    dragMode: DragMode
-    isMouseDown: boolean
+  // drag mode
+  dragMode: DragMode
+  isMouseDown: boolean
 
-    // statistics
-    stats: {
-        visitedCount: number
-        pathLength: number
-        executionMs: number
-    } | null
+  // statistics
+  stats: {
+    visitedCount: number
+    pathLength: number
+    executionMs: number
+  } | null
 }
 
 interface VisualizerActions {
-    // grid actions
-    setCell: (row: number, col: number, type: Cell['type']) => void
-    setCellWeight: (row: number, col: number, weight: number) => void
-    setStartNode: (coordinate: Coordinate) => void
-    setEndNode: (coordinate: Coordinate) => void
-    clearGrid: () => void
-    clearPath: () => void
-    resetGrid: () => void
+  // grid actions
+  setCell: (row: number, col: number, type: Cell['type']) => void
+  setCellWeight: (row: number, col: number, weight: number) => void
+  setStartNode: (coordinate: Coordinate) => void
+  setEndNode: (coordinate: Coordinate) => void
+  clearGrid: () => void
+  clearPath: () => void
+  resetGrid: () => void
 
-    // algorithm
-    setAlgorithm: (id: AlgorithmId) => void
-    runAlgorithm: () => void
-    setResult: (results: AlgorithmResult | null) => void
+  // algorithm
+  setAlgorithm: (id: AlgorithmId) => void
+  runAlgorithm: () => void
+  setResult: (results: AlgorithmResult | null) => void
 
-    // custom controls actions
-    setStatus: (state: Status) => void
-    setSpeed: (speed: SpeedLevel) => void
+  // custom controls actions
+  setStatus: (state: Status) => void
+  setSpeed: (speed: SpeedLevel) => void
 
-    // drag mode
-    setDragMode: (fashion: DragMode) => void
-    setMouseDown: (down: boolean) => void
+  // drag mode
+  setDragMode: (fashion: DragMode) => void
+  setMouseDown: (down: boolean) => void
 
-    // statistics
-    setStats: (stats: VisualizerState['stats']) => void
+  // statistics
+  setStats: (stats: VisualizerState['stats']) => void
 }
 
 type VisualizerStore = VisualizerState & VisualizerActions
@@ -255,26 +261,36 @@ export const useVisualizerStore = create<VisualizerStore>()(
       setAlgorithm: (id) => set({ selectedAlgorithm: id }, false, 'setAlgorithm'),
 
       runAlgorithm: async () => {
-        const { grid, startNode, endNode, selectedAlgorithm, setCell, setResult, clearPath } = get()
+        const { grid, startNode, endNode, selectedAlgorithm, setCell, setResult, setStats, clearPath } = get()
 
         clearPath()
 
         const algo = ALGORITHMS[selectedAlgorithm] ?? bfs
+        const t0 = performance.now()
         const result = algo(grid, startNode, endNode)
+        const executionMs = performance.now() - t0
+
         setResult(result)
         set({ status: 'running' }, false, 'runAlgorithm')
 
         const myRun = ++runId
 
         for (const step of result.steps) {
-          if (myRun !== runId) return 
+          if (myRun !== runId) return
           for (const c of step.cells) {
             setCell(c.row, c.col, step.type === 'visit' ? 'visited' : 'path')
           }
-          await sleep(15)
+          await sleep(10)
         }
 
-        if (myRun === runId) set({ status: 'done' }, false, 'runAlgorithm')
+        if (myRun === runId) {
+          set({ status: 'done' }, false, 'runAlgorithm')
+          setStats({
+            visitedCount: result.visitedCount,
+            pathLength: result.pathLength,
+            executionMs,
+          })
+        }
       },
 
       setResult: (results) => set({ results }, false, 'setResult'),
