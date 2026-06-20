@@ -73,9 +73,9 @@ export type DragMode = 'wall' | 'erase' | 'move-start' | 'move-end' | 'weight' |
 export type SpeedLevel = 'fast' | 'normal' | 'slow'
 
 export const SPEED_MAP: Record<SpeedLevel, number> = {
-    fast: 10,
-    normal: 30, 
-    slow: 80,
+    fast: 3,
+    normal: 12,
+    slow: 35,
 }
 
 export const CELL_COLORS = {

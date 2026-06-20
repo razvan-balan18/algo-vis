@@ -9,8 +9,8 @@ import type {
   SpeedLevel,
   DragMode,
   GridSetup,
-} from '@/types'
-import { SPEED_MAP } from '@/types'
+} from '@/types/pathIndex'
+import { SPEED_MAP } from '@/types/pathIndex'
 import { bfs } from '@/GraphVisualizer/algs/bfs'
 import { dfs } from '@/GraphVisualizer/algs/dfs'
 import { dijkstra } from '@/GraphVisualizer/algs/dijkstra'
@@ -280,7 +280,8 @@ export const useVisualizerStore = create<VisualizerStore>()(
           for (const c of step.cells) {
             setCell(c.row, c.col, step.type === 'visit' ? 'visited' : 'path')
           }
-          await sleep(10)
+          // Read speed fresh each tick so changing it mid-run takes effect.
+          await sleep(SPEED_MAP[get().speed])
         }
 
         if (myRun === runId) {

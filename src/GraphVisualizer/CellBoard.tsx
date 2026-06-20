@@ -1,4 +1,4 @@
-import { CELL_COLORS, type Cell } from "@/types";
+import { CELL_COLORS, type Cell } from "@/types/pathIndex";
 import { memo } from "react";
 
 interface CellBoardProps {
