@@ -2,6 +2,9 @@
 
 React visualizer for sorting and graph/pathfinding algorithms.
 
+## Demo
+![App Demo](public/demo.gif)
+
 ## Stack
 
 - React
