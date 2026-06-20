@@ -11,8 +11,17 @@ import type {
     GridSetup,
 } from '@/types'
 import { SPEED_MAP } from '@/types'
+import { bfs } from '@/GraphVisualizer/algs/bfs'
 
-// grid initialization
+type AlgorithmFn = (grid: Cell[][], start: Coordinate, end: Coordinate) => AlgorithmResult
+
+const ALGORITHMS: Partial<Record<AlgorithmId, AlgorithmFn>> = {
+  bfs,
+}
+
+let runId = 0
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
 function createGrid(rows: number, cols: number, start: Coordinate, end: Coordinate): Cell[][] {
     return Array.from({ length: rows }, (_, r) =>
         Array.from({ length: cols }, (_, c) => ({
@@ -82,6 +91,7 @@ interface VisualizerActions {
 
     // algorithm
     setAlgorithm: (id: AlgorithmId) => void
+    runAlgorithm: () => void
     setResult: (results: AlgorithmResult | null) => void
 
     // custom controls actions
@@ -243,6 +253,29 @@ export const useVisualizerStore = create<VisualizerStore>()(
         ),
 
       setAlgorithm: (id) => set({ selectedAlgorithm: id }, false, 'setAlgorithm'),
+
+      runAlgorithm: async () => {
+        const { grid, startNode, endNode, selectedAlgorithm, setCell, setResult, clearPath } = get()
+
+        clearPath()
+
+        const algo = ALGORITHMS[selectedAlgorithm] ?? bfs
+        const result = algo(grid, startNode, endNode)
+        setResult(result)
+        set({ status: 'running' }, false, 'runAlgorithm')
+
+        const myRun = ++runId
+
+        for (const step of result.steps) {
+          if (myRun !== runId) return 
+          for (const c of step.cells) {
+            setCell(c.row, c.col, step.type === 'visit' ? 'visited' : 'path')
+          }
+          await sleep(15)
+        }
+
+        if (myRun === runId) set({ status: 'done' }, false, 'runAlgorithm')
+      },
 
       setResult: (results) => set({ results }, false, 'setResult'),
 

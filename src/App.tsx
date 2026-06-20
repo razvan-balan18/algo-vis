@@ -1,6 +1,5 @@
 import './App.css'
-import { Board } from './GraphVisualizer/Board';
-import SortingVisualizer from './SortingVisualizer/SortingVisualizer';
+import { GraphVisualizer } from './GraphVisualizer/GraphVisualizer';
 import { BrowserRouter } from 'react-router'
 
 function App() {
@@ -9,7 +8,7 @@ function App() {
 
     <BrowserRouter>
      {/* < SortingVisualizer /> */}
-      < Board />
+      <GraphVisualizer />
     </BrowserRouter>
   )
 }
