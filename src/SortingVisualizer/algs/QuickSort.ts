@@ -1,33 +1,42 @@
-const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+import type { SortResult, SortStep } from '@/types/sortIndex'
 
-export const quickSort = async function(array: number[], onUpdate: (arr: number[]) => void) {
-    const arr = [...array];
-    await quick_sort(arr, 0, arr.length - 1, onUpdate);
-    return arr;
-}
+export function quickSort(input: number[]): SortResult {
+    const arr = [...input]
+    const steps: SortStep[] = []
+    let comparisons = 0
+    let swaps = 0
 
-async function pivot(array: number[], start: number, end: number, onUpdate: (arr: number[]) => void): Promise<number> {
-    let i: number = start + 1;
-    let piv: number = array[start];
+    const partition = (start: number, end: number): number => {
+        const pivot = arr[start]!
+        let i = start + 1
 
-    for (let j = start + 1; j <= end; j++) {
-        if (array[j] < piv) {
-            [array[i], array[j]] = [array[j], array[i]];
-            onUpdate([...array]);
-            await sleep(10);
-            ++i;
+        for (let j = start + 1; j <= end; j++) {
+            comparisons++
+            steps.push({ array: [...arr], highlights: [j, start], type: 'compare' })
+
+            if (arr[j]! < pivot) {
+                [arr[i], arr[j]] = [arr[j]!, arr[i]!]
+                swaps++
+                steps.push({ array: [...arr], highlights: [i, j], type: 'swap' })
+                i++
+            }
+        }
+
+        [arr[start], arr[i - 1]] = [arr[i - 1]!, arr[start]!]
+        swaps++
+        steps.push({ array: [...arr], highlights: [start, i - 1], type: 'swap' })
+        return i - 1
+    }
+
+    const sort = (start: number, end: number) => {
+        if (start < end) {
+            const pivotPos = partition(start, end)
+            sort(start, pivotPos - 1)
+            sort(pivotPos + 1, end)
         }
     }
-    [array[start], array[i - 1]] = [array[i - 1], array[start]];
-    onUpdate([...array]);
-    await sleep(10);
-    return i - 1;
-}
 
-async function quick_sort(array: number[], start: number, end: number, onUpdate: (arr: number[]) => void): Promise<void> {
-    if (start < end) {
-        let piv_pos: number = await pivot(array, start, end, onUpdate);
-        await quick_sort(array, start, piv_pos - 1, onUpdate);
-        await quick_sort(array, piv_pos + 1, end, onUpdate);
-    }
+    sort(0, arr.length - 1)
+
+    return { steps, comparisons, swaps }
 }

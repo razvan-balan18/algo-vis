@@ -1,21 +1,23 @@
-const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+import type { SortResult, SortStep } from '@/types/sortIndex'
 
-export const bubbleSort = async function(array: number[], onUpdate: (arr: number[]) => void) {
-    const arr = [...array]
-    await bubble_sort(arr, onUpdate)
-    return arr
-}
-
-async function bubble_sort(array: number[], onUpdate: (arr: number[]) => void):Promise<void> {
-    const arr = [...array];
+export function bubbleSort(input: number[]): SortResult {
+    const arr = [...input]
+    const steps: SortStep[] = []
+    let comparisons = 0
+    let swaps = 0
 
     for (let i = 0; i < arr.length; i++) {
         for (let j = arr.length - 1; j > i; j--) {
-            if (arr[j] < arr[j - 1]) {
-                [arr[j], arr[j - 1]] = [arr[j - 1], arr[j]];
-                onUpdate([...arr]);
-                await sleep(10);
+            comparisons++
+            steps.push({ array: [...arr], highlights: [j, j - 1], type: 'compare' })
+
+            if (arr[j]! < arr[j - 1]!) {
+                [arr[j], arr[j - 1]] = [arr[j - 1]!, arr[j]!]
+                swaps++
+                steps.push({ array: [...arr], highlights: [j, j - 1], type: 'swap' })
             }
         }
     }
+
+    return { steps, comparisons, swaps }
 }
